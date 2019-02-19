@@ -8,7 +8,8 @@ The output is a HashMap<key, reduced_value>.
 
 Each node has a name and the data passed through shell arguments when running the process.
 For the sake of simplicity data is represented as 
-values in `range(from, to)` (see in Docs sec.)
+values in `range(from, to)` (see in Docs sec.). The Map/Reduce op. starts on GET request
+to `/start-map` endpoint of Master server
 
 #### Docs
 
