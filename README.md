@@ -1,14 +1,14 @@
 ## Basic node.js implementation of distributed Map/Reduce
 
 The implementation includes the example of Map/Reduce operation in a Master/Slave setup.\
-Each slave node has the data represented as HashMap<key, value> and the function to map it to.\
-Master/reduce node gathers the data from all connected nodes, does the groupby Key op. 
-and reduces the values for the same key.\
+Each slave node has the data represented as HashMap<key, value> and the function to map it to.
+Master/reduce node gathers the data from all connected nodes, does the groupby Key op.
+and reduces the values for the same key.
 The output is a HashMap<key, reduced_value>.
-___
+
 Each node has a name and the data passed through shell arguments when running the process.
 For the sake of simplicity data is represented as 
-values in `<code>`range(from, to)` (see in Docs sec.)
+values in `range(from, to)` (see in Docs sec.)
 
 #### Docs
 
