@@ -20,9 +20,13 @@ const processMapAndDistribute = (data, socket) => {
     socket.emit('transfer-start', {name})
     const promiseArray = [];
     local_storage.forEach((v, k) => {
-        promiseArray.push(new Promise(resolve => socket.emit('data', mapper(v, k), resolve)))
+        promiseArray.push(new Promise(resolve => socket.emit('data', mapper(v, k), () => {
+            resolve();
+        })))
     })
-    Promise.all(promiseArray).then(() => socket.emit('transfer-end', {name}));
+    Promise.all(promiseArray).then(() => {
+        socket.emit('transfer-end', {name})
+    }).catch(console.error);
 }
 
 const socket = io.connect('http://localhost:8080/');

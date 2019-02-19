@@ -31,14 +31,15 @@ app.get('/start-map', (req, res) => {
 })
 
 io.on("connection", (socket) => {
-    socket.on("data", (data) => {
+    socket.on("data", (data, cb) => {
         data_collection.push(data)
-        console.log("Data")
+        cb()
     })
     socket.on("transfer-start", ({name}) => {
         nodes_transfering.set(name, true)
     })
     socket.on("transfer-end", ({name}) => {
+        console.log("Transfer-end from :", name)
         nodes_transfering.set(name, false)
         if (!nodes_transfering.values().some((el) => el)) {
             console.log(doMapReduce(data_collection, reducer))
