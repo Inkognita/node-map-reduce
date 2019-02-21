@@ -6,6 +6,7 @@ const data_collection = [];
 const nodes_transfering = new HashMap();
 let reducingInProcess = false;
 
+const mapper = `(v, k) => ({v, k: Math.floor(Math.random() * 5) * k})`;
 const reducer = data_ => {
     return data_.reduce((a, b) => a + b)
 };
@@ -16,33 +17,36 @@ const doMapReduce = (input, reduceFunc) => {
             map_.set(k, [])
         }
         map_.get(k).push(v)
-    })
+    });
     return map_.entries().map(([k, v]) => ({k, v: reduceFunc(v)}))
-}
+};
 
 app.get('/start-map', (req, res) => {
     if (!reducingInProcess) {
-        io.emit('map');
-        res.send("Starting map");
-        reducingInProcess = true;
+        const promiseArray = Object.keys(io.sockets.sockets)
+            .map(s_id => new Promise(resolve => io.sockets.sockets[s_id].emit('map', {f: mapper}, resolve)))
+        Promise.all(promiseArray).then(() => {
+            res.send("Starting map");
+            reducingInProcess = true;
+        }).catch(console.error)
     } else {
         res.send("Reducing in process")
     }
-})
+});
 
 io.on("connection", (socket) => {
     socket.on("data", (data, cb) => {
-        data_collection.push(data)
+        data_collection.push(data);
         cb()
-    })
+    });
     socket.on("transfer-start", ({name}) => {
         nodes_transfering.set(name, true)
-    })
+    });
     socket.on("transfer-end", ({name}) => {
-        console.log("Transfer-end from :", name)
-        nodes_transfering.set(name, false)
+        console.log("Transfer-end from :", name);
+        nodes_transfering.set(name, false);
         if (!nodes_transfering.values().some((el) => el)) {
-            console.log(doMapReduce(data_collection, reducer))
+            console.log(doMapReduce(data_collection, reducer));
             reducingInProcess = false;
         }
     })
