@@ -6,7 +6,7 @@ const data_collection = [];
 const nodes_transfering = new HashMap();
 let reducingInProcess = false;
 
-const mapper = `(v, k) => ({v, k: Math.floor(Math.random() * 5) * k})`;
+const mapper = (v, k) => ({v, k: Math.floor(Math.random() * 5) * k});
 const reducer = data_ => {
     return data_.reduce((a, b) => a + b)
 };
@@ -24,7 +24,7 @@ const doMapReduce = (input, reduceFunc) => {
 app.get('/start-map', (req, res) => {
     if (!reducingInProcess) {
         const promiseArray = Object.keys(io.sockets.sockets)
-            .map(s_id => new Promise(resolve => io.sockets.sockets[s_id].emit('map', {f: mapper}, resolve)))
+            .map(s_id => new Promise(resolve => io.sockets.sockets[s_id].emit('map', {f: mapper+''}, resolve)))
         Promise.all(promiseArray).then(() => {
             res.send("Starting map");
             reducingInProcess = true;
